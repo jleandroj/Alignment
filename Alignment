@@ -1,0 +1,24 @@
+# Aligning
+
+# Bowtie2
+
+bowtie2 -p 10 -x $INDEX -1 raw_data/read_1_filtered.fastq -2 raw_data/read_2_filtered.fastq -S alignments/NA12878.bt2.sam
+
+# BWA Sampe
+
+bwa aln -t 10 genome/hg19.fa raw_data/read_1_filtered.fastq  >  alignments/NA12878.R1.sai
+bwa aln -t 10 genome/hg19.fa raw_data/read_2_filtered.fastq  >  alignments/NA12878.R2.sai
+bwa sampe genome/hg19.fa alignments/NA12878.R1.sai alignments/NA12878.R2.sai raw_data/read_1_filtered.fastq raw_data/read_2_filtered.fastq >  alignments/NA12878.bwa-sampe.sam
+
+# BWA Mem
+
+bwa mem -t 10 genome/hg19.fa raw_data/read_1_filtered.fastq raw_data/read_2_filtered.fastq  >  alignments/NA12878.bwa-mem.sam
+
+# CUSHAW3
+
+cushaw3 align -r $INDEX -t 10 -o alignments/NA12878.CUSHAW3.sam -q raw_data/read_1_filtered.fastq raw_data/read_2_filtered.fastq
+
+# MOSAIK
+
+MosaikBuild -q raw_data/read_1_filtered.fastq -q2 raw_data/read_2_filtered.fastq -st illumina -outalignments/NA12878.MOSAIK.mkb
+MosaikAligner -in alignments/NA12878.MOSAIK.mkb -out alignments/NA12878.MOSAIK -p 10 -ia genome/hg19.dat -j genome/hg19_15 -annpe tools/MOSAIK/src/networkFile/2.1.78.pe.ann -annse tools/MOSAIK/src/networkFile/2.1.78.se.ann
